@@ -143,12 +143,9 @@ public class Asteroid extends Participant implements ShipDestroyer
     public void collidedWith (Participant p)
     {
         if (p instanceof AsteroidDestroyer)
-        {
-            // Expire the asteroid
-            Participant.expire(this);
-
+        {         
             // Inform the controller
-            controller.asteroidDestroyed();
+            controller.asteroidDestroyed(this);
         }
     }
 }

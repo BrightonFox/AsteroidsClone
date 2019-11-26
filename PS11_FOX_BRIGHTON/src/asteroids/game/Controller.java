@@ -201,8 +201,21 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     /**
      * An asteroid has been destroyed
      */
-    public void asteroidDestroyed ()
+    public void asteroidDestroyed (Asteroid a)
     {
+        
+        //creates two new asteroids of smaller size
+        if(a.getSize() == 2) {
+            addParticipant(new Asteroid((int)(Math.random() * 3), 1, a.getX(), a.getY(), (int)a.getSpeed() + 1, this));
+            addParticipant(new Asteroid((int)(Math.random() * 3), 1, a.getX(), a.getY(), (int)a.getSpeed() + 1, this));
+        } else if (a.getSize() == 1) {
+            addParticipant(new Asteroid((int)(Math.random() * 3), 0, a.getX(), a.getY(), (int)a.getSpeed() + 1, this));
+            addParticipant(new Asteroid((int)(Math.random() * 3), 0, a.getX(), a.getY(), (int)a.getSpeed() + 1, this));
+        }
+
+        // Expire the asteroid
+        Participant.expire(a);
+        
         // If all the asteroids are gone, schedule a transition
         if (countAsteroids() == 0)
         {
