@@ -114,7 +114,7 @@ public class Ship extends Participant implements AsteroidDestroyer
         }
     }
     
-    private void makeNoFlame ()
+    public void makeNoFlame ()
     {
     	Path2D.Double poly = new Path2D.Double();
         poly.moveTo(21, 0);
