@@ -85,7 +85,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         display.setLegend("Asteroids");
 
         // Place four asteroids near the corners of the screen.
-        placeAsteroids();
+        placeAsteroids(4);
     }
 
     /**
@@ -112,9 +112,12 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     /**
      * Places an asteroid near one corner of the screen. Gives it a random velocity and rotation.
      */
-    private void placeAsteroids ()
+    private void placeAsteroids (int numOfAsteroids)
     {
-        addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
+        for (int i = 0; i < numOfAsteroids; i++)
+        {
+            addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
+        }
     }
 
     /**
@@ -135,8 +138,8 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         // Clear the screen
         clear();
 
-        // Plac asteroids
-        placeAsteroids();
+        // Place asteroids
+        placeAsteroids(4);
 
         // Place the ship
         placeShip();
