@@ -34,15 +34,20 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
     /** The game display */
     private Display display;
-    
-    public int bulletCount = 0;
 
+    /** number of bullets on screen */
+    private int bulletCount = 0;
+
+    /** Status of right key */
     private boolean rightPressed;
 
+    /** Status of left key */
     private boolean leftPressed;
 
+    /** Status of up key */
     private boolean upPressed;
-    
+
+    /** Status of space bar */
     private boolean spacePressed;
 
     /**
@@ -178,13 +183,12 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
      * The ship has been destroyed
      */
     public void shipDestroyed ()
-    {        
+    {
+        //reset key statuses
         rightPressed = false;
-        
         leftPressed = false;
-        
         upPressed = false;
-        
+
         // Null out the ship
         ship = null;
 
@@ -246,27 +250,28 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
         // Time to refresh the screen and deal with keyboard input
         else if (e.getSource() == refreshTimer)
-        {          
-        	if (spacePressed && ship != null)
-        	{
-        		fireBullet();
-        	}
-        	
+        {
+            // checks status of all important keybaord inputs each frame
+            if (spacePressed && ship != null)
+            {
+                fireBullet();
+            }
+
             if (rightPressed && ship != null)
             {
                 ship.turnRight();
             }
-            
+
             if (leftPressed && ship != null)
             {
                 ship.turnLeft();
             }
-            
+
             if (upPressed && ship != null)
             {
                 ship.accelerate();
             }
-            
+
             // It may be time to make a game transition
             performTransition();
 
@@ -320,11 +325,11 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     @Override
     public void keyPressed (KeyEvent e)
     {
-    	if (e.getKeyCode() == KeyEvent.VK_SPACE && ship != null)
-    	{
-    		spacePressed = true;
-    	}
-    	
+        if (e.getKeyCode() == KeyEvent.VK_SPACE && ship != null)
+        {
+            spacePressed = true;
+        }
+
         if (e.getKeyCode() == KeyEvent.VK_RIGHT && ship != null)
         {
             rightPressed = true;
@@ -349,16 +354,16 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     @Override
     public void keyReleased (KeyEvent e)
     {
-    	if (e.getKeyCode() == KeyEvent.VK_SPACE && ship != null)
-    	{
-    		spacePressed = false;
-    	}
-    	
+        if (e.getKeyCode() == KeyEvent.VK_SPACE && ship != null)
+        {
+            spacePressed = false;
+        }
+
         if (e.getKeyCode() == KeyEvent.VK_RIGHT && ship != null)
         {
             rightPressed = false;
         }
-        
+
         if (e.getKeyCode() == KeyEvent.VK_LEFT && ship != null)
         {
             leftPressed = false;
@@ -370,13 +375,22 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
             ship.makeNoFlame();
         }
     }
-    
-    public void fireBullet()
+
+    /**
+     * Creates bullet object headed in direction of ship
+     */
+    public void fireBullet ()
     {
-    	if (ship != null && bulletCount <= BULLET_LIMIT)
-    	{
-    	    bulletCount++;
-    		addParticipant(new Bullet((int)ship.getXNose(), (int)ship.getYNose(), ship.getRotation(), this));
-    	}    		
+        // limit number of bullets on screen to 8
+        if (ship != null && bulletCount <= BULLET_LIMIT)
+        {
+            bulletNumAdjust(1);
+            addParticipant(new Bullet((int) ship.getXNose(), (int) ship.getYNose(), ship.getRotation(), this));
+        }
+    }
+
+    public void bulletNumAdjust (int adjustment)
+    {
+        bulletCount = bulletCount + adjustment;
     }
 }
