@@ -34,6 +34,12 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     /** The game display */
     private Display display;
 
+    private boolean rightPressed;
+
+    private boolean leftPressed;
+
+    private boolean upPressed;
+
     /**
      * Constructs a controller to coordinate the game and screen
      */
@@ -216,7 +222,22 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
         // Time to refresh the screen and deal with keyboard input
         else if (e.getSource() == refreshTimer)
-        {
+        {          
+            if (rightPressed && ship != null)
+            {
+                ship.turnRight();
+            }
+            
+            if (leftPressed && ship != null)
+            {
+                ship.turnLeft();
+            }
+            
+            if (upPressed && ship != null)
+            {
+                ship.accelerate();
+            }
+            
             // It may be time to make a game transition
             performTransition();
 
@@ -272,7 +293,17 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     {
         if (e.getKeyCode() == KeyEvent.VK_RIGHT && ship != null)
         {
-            ship.turnRight();
+            rightPressed = true;
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_LEFT && ship != null)
+        {
+            leftPressed = true;
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_UP && ship != null)
+        {
+            upPressed = true;
         }
     }
 
@@ -284,5 +315,19 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     @Override
     public void keyReleased (KeyEvent e)
     {
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT && ship != null)
+        {
+            rightPressed = false;
+        }
+        
+        if (e.getKeyCode() == KeyEvent.VK_LEFT && ship != null)
+        {
+            leftPressed = false;
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_UP && ship != null)
+        {
+            upPressed = false;
+        }
     }
 }

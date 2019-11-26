@@ -3,6 +3,7 @@ package asteroids.participants;
 import static asteroids.game.Constants.*;
 import java.awt.Shape;
 import java.awt.geom.*;
+import java.awt.geom.Path2D.Double;
 import asteroids.destroyers.*;
 import asteroids.game.Controller;
 import asteroids.game.Participant;
@@ -38,7 +39,7 @@ public class Ship extends Participant implements AsteroidDestroyer
         outline = poly;
 
         // Schedule an acceleration in two seconds
-        new ParticipantCountdownTimer(this, "move", 2000);
+        // new ParticipantCountdownTimer(this, "move", 2000);
     }
 
     /**
@@ -99,6 +100,29 @@ public class Ship extends Participant implements AsteroidDestroyer
     public void accelerate ()
     {
         accelerate(SHIP_ACCELERATION);
+
+        makeFlame();
+    }
+
+    private void makeFlame ()
+    {
+        Path2D.Double poly = new Path2D.Double();
+        poly.moveTo(21, 0);
+        poly.lineTo(-21, 12);
+        poly.lineTo(-14, 10);        
+        poly.lineTo(-19, 8);
+        poly.lineTo(-17, 6);
+        poly.lineTo(-24, 4);
+        poly.lineTo(-20, 2);
+        poly.lineTo(-30, 0);
+        poly.lineTo(-20, -2);
+        poly.lineTo(-24, -4);
+        poly.lineTo(-17, -6);
+        poly.lineTo(-19, -8);        
+        poly.lineTo(-14, -10);
+        poly.lineTo(-21, -12);
+        poly.closePath();
+        outline = poly;
     }
 
     /**
