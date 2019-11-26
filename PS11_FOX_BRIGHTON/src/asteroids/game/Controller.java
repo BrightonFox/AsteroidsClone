@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.util.Iterator;
 import javax.swing.*;
 import asteroids.participants.Asteroid;
+import asteroids.participants.Bullet;
 import asteroids.participants.Ship;
 
 /**
@@ -33,12 +34,16 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
     /** The game display */
     private Display display;
+    
+    private int bulletCount = 0;
 
     private boolean rightPressed;
 
     private boolean leftPressed;
 
     private boolean upPressed;
+    
+    private boolean spacePressed;
 
     /**
      * Constructs a controller to coordinate the game and screen
@@ -173,7 +178,13 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
      * The ship has been destroyed
      */
     public void shipDestroyed ()
-    {
+    {        
+        rightPressed = false;
+        
+        leftPressed = false;
+        
+        upPressed = false;
+        
         // Null out the ship
         ship = null;
 
@@ -223,6 +234,11 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         // Time to refresh the screen and deal with keyboard input
         else if (e.getSource() == refreshTimer)
         {          
+        	if (spacePressed && ship != null)
+        	{
+        		fireBullet();
+        	}
+        	
             if (rightPressed && ship != null)
             {
                 ship.turnRight();
@@ -291,6 +307,11 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     @Override
     public void keyPressed (KeyEvent e)
     {
+    	if (e.getKeyCode() == KeyEvent.VK_SPACE && ship != null)
+    	{
+    		spacePressed = false;
+    	}
+    	
         if (e.getKeyCode() == KeyEvent.VK_RIGHT && ship != null)
         {
             rightPressed = true;
@@ -315,6 +336,11 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     @Override
     public void keyReleased (KeyEvent e)
     {
+    	if (e.getKeyCode() == KeyEvent.VK_SPACE && ship != null)
+    	{
+    		spacePressed = false;
+    	}
+    	
         if (e.getKeyCode() == KeyEvent.VK_RIGHT && ship != null)
         {
             rightPressed = false;
@@ -330,5 +356,13 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
             upPressed = false;
             ship.makeNoFlame();
         }
+    }
+    
+    public void fireBullet()
+    {
+    	if (ship != null && bulletCount <= BULLET_LIMIT)
+    	{
+    		addParticipant(new Bullet((int)ship.getXNose(), (int)ship.getYNose(), ship.getRotation(), this));
+    	}    		
     }
 }
