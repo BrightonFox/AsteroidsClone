@@ -20,6 +20,8 @@ public class Ship extends Participant implements AsteroidDestroyer
     /** Game controller */
     private Controller controller;
 
+    public int flame;
+
     /**
      * Constructs a ship at the specified coordinates that is pointed in the given direction.
      */
@@ -100,8 +102,38 @@ public class Ship extends Participant implements AsteroidDestroyer
     public void accelerate ()
     {
         accelerate(SHIP_ACCELERATION);
+        
+        if (flame == 0)
+        {
+            makeFlame();
+        }
+        
+        else
+        {
+            makeNoFlame();
+        }
+    }
 
-        makeFlame();
+    private void makeNoFlame ()
+    {
+        Path2D.Double poly = new Path2D.Double();
+        poly.moveTo(21, 0);
+        poly.lineTo(-21, 12);
+        poly.lineTo(-14, 10);
+        poly.lineTo(-17.75, 8);
+        poly.lineTo(-16.25, 6);
+        poly.lineTo(-21.5, 4);
+        poly.lineTo(-18.5, 2);
+        poly.lineTo(-26, 0);
+        poly.lineTo(-18.5, -2);
+        poly.lineTo(-21.5, -4);
+        poly.lineTo(-16.25, -6);
+        poly.lineTo(-17.75, -8);
+        poly.lineTo(-14, -10);
+        poly.lineTo(-21, -12);
+        poly.closePath();
+        outline = poly;
+        flame--;
     }
 
     private void makeFlame ()
@@ -109,7 +141,7 @@ public class Ship extends Participant implements AsteroidDestroyer
         Path2D.Double poly = new Path2D.Double();
         poly.moveTo(21, 0);
         poly.lineTo(-21, 12);
-        poly.lineTo(-14, 10);        
+        poly.lineTo(-14, 10);
         poly.lineTo(-19, 8);
         poly.lineTo(-17, 6);
         poly.lineTo(-24, 4);
@@ -118,11 +150,12 @@ public class Ship extends Participant implements AsteroidDestroyer
         poly.lineTo(-20, -2);
         poly.lineTo(-24, -4);
         poly.lineTo(-17, -6);
-        poly.lineTo(-19, -8);        
+        poly.lineTo(-19, -8);
         poly.lineTo(-14, -10);
         poly.lineTo(-21, -12);
         poly.closePath();
         outline = poly;
+        flame++;
     }
 
     /**
