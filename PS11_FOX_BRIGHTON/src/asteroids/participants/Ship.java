@@ -108,13 +108,25 @@ public class Ship extends Participant implements AsteroidDestroyer
             makeFlame();
         }
         
-        else
+        else if (flame == 1)
         {
-            makeNoFlame();
+            makeSmallFlame();
         }
     }
-
+    
     private void makeNoFlame ()
+    {
+    	Path2D.Double poly = new Path2D.Double();
+        poly.moveTo(21, 0);
+        poly.lineTo(-21, 12);
+        poly.lineTo(-14, 10);
+        poly.lineTo(-14, -10);
+        poly.lineTo(-21, -12);
+        poly.closePath();
+        outline = poly;
+    }
+
+    private void makeSmallFlame ()
     {
         Path2D.Double poly = new Path2D.Double();
         poly.moveTo(21, 0);

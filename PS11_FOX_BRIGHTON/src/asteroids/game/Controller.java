@@ -328,7 +328,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         if (e.getKeyCode() == KeyEvent.VK_UP && ship != null)
         {
             upPressed = false;
-            ship.flame = 0;
+            ship.makeNoFlame();
         }
     }
 }
