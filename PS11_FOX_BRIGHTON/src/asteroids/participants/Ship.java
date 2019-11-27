@@ -3,7 +3,6 @@ package asteroids.participants;
 import static asteroids.game.Constants.*;
 import java.awt.Shape;
 import java.awt.geom.*;
-import java.awt.geom.Path2D.Double;
 import asteroids.destroyers.*;
 import asteroids.game.Controller;
 import asteroids.game.Participant;

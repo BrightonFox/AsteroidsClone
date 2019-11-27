@@ -35,7 +35,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     /** The game display */
     private Display display;
     
-    private int bulletCount = 0;
+    public int bulletCount = 0;
 
     private boolean rightPressed;
 
@@ -309,7 +309,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     {
     	if (e.getKeyCode() == KeyEvent.VK_SPACE && ship != null)
     	{
-    		spacePressed = false;
+    		spacePressed = true;
     	}
     	
         if (e.getKeyCode() == KeyEvent.VK_RIGHT && ship != null)
@@ -362,6 +362,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     {
     	if (ship != null && bulletCount <= BULLET_LIMIT)
     	{
+    	    bulletCount++;
     		addParticipant(new Bullet((int)ship.getXNose(), (int)ship.getYNose(), ship.getRotation(), this));
     	}    		
     }

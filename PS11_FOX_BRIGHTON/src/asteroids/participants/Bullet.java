@@ -6,6 +6,7 @@ import java.awt.geom.*;
 import asteroids.destroyers.*;
 import asteroids.game.Controller;
 import asteroids.game.Participant;
+import asteroids.game.ParticipantCountdownTimer;
 
 /**
  * Represents ships
@@ -20,7 +21,7 @@ public class Bullet extends Participant implements AsteroidDestroyer
     {
         this.controller = controller;
         setPosition(x, y);
-        setRotation(direction);
+        setVelocity(BULLET_SPEED, direction);
         
         Path2D.Double poly = new Path2D.Double();
         poly.moveTo(0.5, 0);
@@ -29,6 +30,8 @@ public class Bullet extends Participant implements AsteroidDestroyer
         poly.lineTo(-0.5, 0.5);
         poly.closePath();
         outline = poly;
+        
+        new ParticipantCountdownTimer(this, this, BULLET_DURATION);
     }
     
     @Override
@@ -45,12 +48,15 @@ public class Bullet extends Participant implements AsteroidDestroyer
     }
     
     @Override
-    public void collidedWith (Participant p)
+    public void countdownComplete(final Object payload)
     {
-        if (p instanceof ShipDestroyer)
-        {
-            // Expire the bullet from the game
-            Participant.expire(this);
-        }
+        controller.bulletCount--;
+        
+        Participant.expire(this);
+    }
+    
+    @Override
+    public void collidedWith (Participant p)
+    { 
     }
 }
