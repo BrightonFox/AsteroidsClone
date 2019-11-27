@@ -9,14 +9,20 @@ import asteroids.game.Participant;
 import asteroids.game.ParticipantCountdownTimer;
 
 /**
- * Represents ships
+ * Represents bullet
  */
 public class Bullet extends Participant implements AsteroidDestroyer
 {
+    /** The outline of the bullet */
     private Shape outline;
     
+    /** Game controller */
     private Controller controller;
     
+    /**
+     * Constructs bullet at specified coordinates, headed in specified direction at BULLET_SPEED
+     * Calls Countdown Complete after BULLET_DURATION milliseconds
+     */
     public Bullet(int x, int y, double direction, Controller controller)
     {
         this.controller = controller;
@@ -43,14 +49,16 @@ public class Bullet extends Participant implements AsteroidDestroyer
     @Override
     public void move ()
     {
-        applyFriction(SHIP_FRICTION);
         super.move();
     }
     
+    /**
+     * Expires bullet after BULLET_DURATION milliseconds and decreases count of bullets on screen
+     */
     @Override
     public void countdownComplete(final Object payload)
     {
-        controller.bulletCount--;
+        controller.bulletNumAdjust(-1);
         
         Participant.expire(this);
     }

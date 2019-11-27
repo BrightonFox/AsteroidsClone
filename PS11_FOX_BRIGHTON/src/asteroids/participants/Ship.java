@@ -19,7 +19,7 @@ public class Ship extends Participant implements AsteroidDestroyer
     /** Game controller */
     private Controller controller;
 
-    public int flame;
+    public boolean flame;
 
     /**
      * Constructs a ship at the specified coordinates that is pointed in the given direction.
@@ -38,9 +38,6 @@ public class Ship extends Participant implements AsteroidDestroyer
         poly.lineTo(-21, -12);
         poly.closePath();
         outline = poly;
-
-        // Schedule an acceleration in two seconds
-        // new ParticipantCountdownTimer(this, "move", 2000);
     }
 
     /**
@@ -96,23 +93,26 @@ public class Ship extends Participant implements AsteroidDestroyer
     }
 
     /**
-     * Accelerates by SHIP_ACCELERATION
+     * Accelerates by SHIP_ACCELERATION and creates flame animation
      */
     public void accelerate ()
     {
         accelerate(SHIP_ACCELERATION);
         
-        if (flame == 0)
+        //toggles flame to create flicker
+        if (flame)
         {
             makeFlame();
-        }
-        
-        else if (flame == 1)
+        }        
+        else
         {
             makeSmallFlame();
         }
     }
     
+    /**
+     * Sets ship back to original shape
+     */
     public void makeNoFlame ()
     {
     	Path2D.Double poly = new Path2D.Double();
@@ -125,6 +125,9 @@ public class Ship extends Participant implements AsteroidDestroyer
         outline = poly;
     }
 
+    /**
+     * Creates small flame on back of ship
+     */
     private void makeSmallFlame ()
     {
         Path2D.Double poly = new Path2D.Double();
@@ -144,9 +147,12 @@ public class Ship extends Participant implements AsteroidDestroyer
         poly.lineTo(-21, -12);
         poly.closePath();
         outline = poly;
-        flame--;
+        flame = true;
     }
 
+    /**
+     * Creates large flame on back of ship
+     */
     private void makeFlame ()
     {
         Path2D.Double poly = new Path2D.Double();
@@ -166,7 +172,7 @@ public class Ship extends Participant implements AsteroidDestroyer
         poly.lineTo(-21, -12);
         poly.closePath();
         outline = poly;
-        flame++;
+        flame = false;
     }
 
     /**
