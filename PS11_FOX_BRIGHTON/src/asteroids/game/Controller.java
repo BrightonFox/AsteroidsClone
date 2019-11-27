@@ -130,9 +130,19 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
      */
     private void placeAsteroids (int numOfAsteroids)
     {
+        int position;
+        
         for (int i = 0; i < numOfAsteroids; i++)
         {
-            addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
+            if ((Math.random() * 2) == 1)
+            {
+                position = EDGE_OFFSET;
+            }
+            else
+            {
+                position = SIZE - EDGE_OFFSET;
+            }
+            addParticipant(new Asteroid(0, 2, position, position, 3, this));
         }
     }
 
@@ -184,7 +194,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
      */
     public void shipDestroyed ()
     {
-        //reset key statuses
+        // reset key statuses
         rightPressed = false;
         leftPressed = false;
         upPressed = false;
@@ -207,18 +217,25 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
      */
     public void asteroidDestroyed (Asteroid a)
     {
-        //creates two new asteroids of smaller size
-        if(a.getSize() == 2) {
-            addParticipant(new Asteroid((int)(Math.random() * 3), 1, a.getX(), a.getY(), (int)a.getSpeed() + 1, this));
-            addParticipant(new Asteroid((int)(Math.random() * 3), 1, a.getX(), a.getY(), (int)a.getSpeed() + 1, this));
-        } else if (a.getSize() == 1) {
-            addParticipant(new Asteroid((int)(Math.random() * 3), 0, a.getX(), a.getY(), (int)a.getSpeed() + 1, this));
-            addParticipant(new Asteroid((int)(Math.random() * 3), 0, a.getX(), a.getY(), (int)a.getSpeed() + 1, this));
+        // creates two new asteroids of smaller size
+        if (a.getSize() == 2)
+        {
+            addParticipant(
+                    new Asteroid((int) (Math.random() * 3), 1, a.getX(), a.getY(), (int) a.getSpeed() + 1, this));
+            addParticipant(
+                    new Asteroid((int) (Math.random() * 3), 1, a.getX(), a.getY(), (int) a.getSpeed() + 1, this));
         }
-        
+        else if (a.getSize() == 1)
+        {
+            addParticipant(
+                    new Asteroid((int) (Math.random() * 3), 0, a.getX(), a.getY(), (int) a.getSpeed() + 1, this));
+            addParticipant(
+                    new Asteroid((int) (Math.random() * 3), 0, a.getX(), a.getY(), (int) a.getSpeed() + 1, this));
+        }
+
         // Expire the asteroid
         Participant.expire(a);
-        
+
         // If all the asteroids are gone, schedule a transition
         if (countAsteroids() == 0)
         {
