@@ -205,8 +205,20 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     /**
      * An asteroid has been destroyed
      */
-    public void asteroidDestroyed ()
+    public void asteroidDestroyed (Asteroid a)
     {
+        //creates two new asteroids of smaller size
+        if(a.getSize() == 2) {
+            addParticipant(new Asteroid((int)(Math.random() * 3), 1, a.getX(), a.getY(), (int)a.getSpeed() + 1, this));
+            addParticipant(new Asteroid((int)(Math.random() * 3), 1, a.getX(), a.getY(), (int)a.getSpeed() + 1, this));
+        } else if (a.getSize() == 1) {
+            addParticipant(new Asteroid((int)(Math.random() * 3), 0, a.getX(), a.getY(), (int)a.getSpeed() + 1, this));
+            addParticipant(new Asteroid((int)(Math.random() * 3), 0, a.getX(), a.getY(), (int)a.getSpeed() + 1, this));
+        }
+        
+        // Expire the asteroid
+        Participant.expire(a);
+        
         // If all the asteroids are gone, schedule a transition
         if (countAsteroids() == 0)
         {
@@ -238,7 +250,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         // Time to refresh the screen and deal with keyboard input
         else if (e.getSource() == refreshTimer)
         {
-            // checks status of all important keybaord inputs each frame
+            // checks status of all important keyboard inputs each frame
             if (spacePressed && ship != null)
             {
                 fireBullet();
@@ -317,17 +329,17 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
             spacePressed = true;
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT && ship != null)
+        if ((e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) && ship != null)
         {
             rightPressed = true;
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_LEFT && ship != null)
+        if ((e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) && ship != null)
         {
             leftPressed = true;
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_UP && ship != null)
+        if ((e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) && ship != null)
         {
             upPressed = true;
         }
@@ -346,17 +358,17 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
             spacePressed = false;
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT && ship != null)
+        if ((e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) && ship != null)
         {
             rightPressed = false;
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_LEFT && ship != null)
+        if ((e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) && ship != null)
         {
             leftPressed = false;
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_UP && ship != null)
+        if ((e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) && ship != null)
         {
             upPressed = false;
             ship.makeNoFlame();
