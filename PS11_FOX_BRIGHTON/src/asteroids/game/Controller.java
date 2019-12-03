@@ -4,6 +4,7 @@ import static asteroids.game.Constants.*;
 import java.awt.event.*;
 import java.util.Iterator;
 import javax.swing.*;
+import asteroids.participants.AlienShip;
 import asteroids.participants.Asteroid;
 import asteroids.participants.Bullet;
 import asteroids.participants.Ship;
@@ -138,6 +139,19 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
      */
     private void placeAsteroids (int numOfAsteroids)
     {
+        
+        
+        
+        
+        addParticipant(new AlienShip(1, this));
+        
+        
+        
+        
+        
+        
+        
+        
         for (int i = 0; i < numOfAsteroids; i++)
         {
             if (i % 4 == 0)

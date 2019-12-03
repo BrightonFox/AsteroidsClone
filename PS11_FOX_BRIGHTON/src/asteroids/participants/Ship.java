@@ -19,6 +19,7 @@ public class Ship extends Participant implements AsteroidDestroyer
     /** Game controller */
     private Controller controller;
 
+    /** boolean to control ship flame */
     public boolean flame;
 
     /**
