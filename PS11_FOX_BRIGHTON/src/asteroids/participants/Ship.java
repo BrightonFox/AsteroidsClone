@@ -188,6 +188,11 @@ public class Ship extends Participant implements AsteroidDestroyer
 
             // Tell the controller the ship was destroyed
             controller.shipDestroyed();
+            
+            // Spawn debris from destroyed ship
+            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 21));
+            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 21));
+            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 8));
         }
     }
 
