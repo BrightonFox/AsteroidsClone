@@ -11,7 +11,7 @@ import asteroids.game.ParticipantCountdownTimer;
 /**
  * Represents bullet
  */
-public class Bullet extends Participant implements AsteroidDestroyer
+public class Bullet extends Participant implements AsteroidDestroyer, AlienShipDestroyer
 {
     /** The outline of the bullet */
     private Shape outline;

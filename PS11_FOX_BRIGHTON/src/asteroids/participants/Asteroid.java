@@ -3,6 +3,7 @@ package asteroids.participants;
 import static asteroids.game.Constants.*;
 import java.awt.Shape;
 import java.awt.geom.*;
+import asteroids.destroyers.AlienShipDestroyer;
 import asteroids.destroyers.AsteroidDestroyer;
 import asteroids.destroyers.ShipDestroyer;
 import asteroids.game.Controller;
@@ -11,7 +12,7 @@ import asteroids.game.Participant;
 /**
  * Represents asteroids
  */
-public class Asteroid extends Participant implements ShipDestroyer
+public class Asteroid extends Participant implements ShipDestroyer, AlienShipDestroyer
 {
     /** The size of the asteroid (0 = small, 1 = medium, 2 = large) */
     private int size;

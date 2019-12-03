@@ -57,6 +57,8 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     /** player's current score */
     private int score;
 
+    private AlienShip alienShip;
+
     /**
      * Constructs a controller to coordinate the game and screen
      */
@@ -135,23 +137,30 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     }
 
     /**
-     * Places an asteroid near one corner of the screen. Gives it a random velocity and rotation.
+     * Place a new Alien ship off screen
+     */
+    private void placeAlienShip ()
+    {
+        // Place a new ship
+        if (level == 2)
+        {
+            alienShip = new AlienShip(1, this);
+            
+            addParticipant(alienShip);
+        }
+        else if (level >= 3)
+        {
+            alienShip = new AlienShip(0, this);
+            
+            addParticipant(alienShip);
+        }
+    }
+    
+    /**
+     * Place an asteroids near corners of the screen. Gives them a random velocity and rotation.
      */
     private void placeAsteroids (int numOfAsteroids)
-    {
-        
-        
-        
-        
-        addParticipant(new AlienShip(1, this));
-        
-        
-        
-        
-        
-        
-        
-        
+    {               
         for (int i = 0; i < numOfAsteroids; i++)
         {
             if (i % 4 == 0)

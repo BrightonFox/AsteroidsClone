@@ -11,12 +11,13 @@ import asteroids.game.ParticipantCountdownTimer;
 /**
  * Represents bullet
  */
-public class AlienBullet extends Participant implements ShipDestroyer//, AsteroidDestroyer
+public class AlienBullet extends Participant implements ShipDestroyer, AsteroidDestroyer
 {
     /** The outline of the bullet */
     private Shape outline;
     
     /** Game controller */
+    @SuppressWarnings("unused")
     private Controller controller;
     
     /**
@@ -67,7 +68,7 @@ public class AlienBullet extends Participant implements ShipDestroyer//, Asteroi
     @Override
     public void collidedWith (Participant p)
     {
-        if (p instanceof ShipDestroyer || p instanceof AsteroidDestroyer)
+        if (p instanceof AlienShipDestroyer)
         {
             // Expire the bullet from the game
             Participant.expire(this);

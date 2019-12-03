@@ -56,7 +56,7 @@ public class AlienShip extends Participant implements AsteroidDestroyer, ShipDes
         new ParticipantCountdownTimer(this, "directionChange", 1500);
         new ParticipantCountdownTimer(this, "fire", 1250);
 
-        double scale = ALIENSHIP_SCALE[size];
+        double scale = ALIENSHIP_SCALE[this.size];
         poly.transform(AffineTransform.getScaleInstance(scale, scale));
 
         this.setPosition(0, 0);
@@ -127,7 +127,7 @@ public class AlienShip extends Participant implements AsteroidDestroyer, ShipDes
     @Override
     public void collidedWith (Participant p)
     {
-        if (p instanceof AsteroidDestroyer)
+        if (p instanceof AlienShipDestroyer)
         {
             Participant.expire(this);
         }
