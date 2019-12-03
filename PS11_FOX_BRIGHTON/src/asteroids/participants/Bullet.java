@@ -71,7 +71,7 @@ public class Bullet extends Participant implements AsteroidDestroyer
     {
         if (p instanceof ShipDestroyer)
         {
-            // Expire the ship from the game
+            // Expire the bullet from the game
             Participant.expire(this);
             
             controller.bulletNumAdjust(-1);

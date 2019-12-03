@@ -3,6 +3,7 @@ package asteroids.game;
 import static asteroids.game.Constants.*;
 import java.awt.*;
 import javax.swing.*;
+import asteroids.participants.Ship;
 
 /**
  * The area of the display in which the game takes place.
@@ -12,18 +13,21 @@ public class Screen extends JPanel
 {
     /** Legend that is displayed across the screen */
     private String legend;
-    
-    private int level;
+
+    private String level;
+
+    private String score;
+
+    private int lives;
 
     /** Game controller */
     private Controller controller;
 
-    private int score;    
-    
     private Font bigText = new Font(Font.SANS_SERIF, Font.PLAIN, 120);
-    
-    private Font smallText = new Font(Font.SANS_SERIF, Font.PLAIN, 60);
-    
+
+    private Font smallText = new Font(Font.SANS_SERIF, Font.PLAIN, 40);
+
+    private Ship lifeShip;
 
     /**
      * Creates an empty screen
@@ -32,8 +36,10 @@ public class Screen extends JPanel
     {
         this.controller = controller;
         legend = "";
-        level = 0;
-
+        level = "";
+        score = "0";
+        lives = 0;
+        lifeShip = new Ship (0, 0, -(Math.PI / 2), null);
         setPreferredSize(new Dimension(SIZE, SIZE));
         setMinimumSize(new Dimension(SIZE, SIZE));
         setBackground(Color.black);
@@ -48,15 +54,20 @@ public class Screen extends JPanel
     {
         this.legend = legend;
     }
-    
+
     public void setLevel (int level)
     {
-        this.level = level;
+        this.level = "" + level;
     }
-    
+
     public void setScore (int score)
     {
-        this.score = score;
+        this.score = "" + score;
+    }
+
+    public void setLives (int lives)
+    {
+        this.lives = lives;
     }
 
     /**
@@ -74,22 +85,27 @@ public class Screen extends JPanel
         super.paintComponent(g);
 
         // Draw each participant in its proper place
-        for (Participant p: controller)
+        for (Participant p : controller)
         {
             p.draw(g);
         }
-        
-        this.setFont(bigText);
+
+        g.setFont(bigText);
         // Draw the legend across the middle of the panel
         int size = g.getFontMetrics().stringWidth(legend);
         g.drawString(legend, (SIZE - size) / 2, SIZE / 2);
 
-        this.setFont(smallText);
-        // font is fluid, refer to Piazza
-        g.drawString(""+score, 0, 120);
+        g.setFont(smallText);
+
+        g.drawString("" + score, 10, 40);
+
+        g.drawString("" + level, SIZE - 30, 40);
         
-        g.drawString(""+level, SIZE - 100, 120);
-        
-        this.setFont(bigText);
+        for (int i = 0; i < lives; i++)
+        {
+            lifeShip.setPosition(20 + i * 30, 70);
+            lifeShip.move();
+            lifeShip.draw(g);
+        }
     }
 }

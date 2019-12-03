@@ -77,4 +77,9 @@ public class Display extends JFrame
     {
         screen.setScore(s);
     }
+    
+    public void setLives (int l)
+    {
+        screen.setLives(l);
+    }
 }

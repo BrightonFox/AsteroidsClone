@@ -184,11 +184,13 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         placeShip();
 
         // Reset statistics
-        lives = 1;
+        lives = 3;
         level = 1;
         score = 0;
         
+        display.setLives(lives);
         display.setLevel(level);
+        display.setScore(score);
 
         // Start listening to events (but don't listen twice)
         display.removeKeyListener(this);
@@ -238,6 +240,9 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
         // Decrement lives
         lives--;
+        
+        // Change visual life count
+        display.setLives(lives);
 
         // Since the ship was destroyed, schedule a transition
         scheduleTransition(END_DELAY);
@@ -347,11 +352,15 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
             // Clear the transition time
             transitionTime = Long.MAX_VALUE;
 
-            // If there are no lives left, the game is over. Show the final
-            // screen.
+            // If there are no lives left, the game is over. Show the final screen.
             if (lives <= 0)
             {
                 finalScreen();
+            }
+            // If there are lives left, respawn new ship
+            else if (this.ship == null)
+            {
+                this.placeShip();
             }
         }
     }
