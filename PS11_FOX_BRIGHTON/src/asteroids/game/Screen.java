@@ -18,7 +18,12 @@ public class Screen extends JPanel
     /** Game controller */
     private Controller controller;
 
-    private int score;
+    private int score;    
+    
+    private Font bigText = new Font(Font.SANS_SERIF, Font.PLAIN, 120);
+    
+    private Font smallText = new Font(Font.SANS_SERIF, Font.PLAIN, 60);
+    
 
     /**
      * Creates an empty screen
@@ -28,11 +33,11 @@ public class Screen extends JPanel
         this.controller = controller;
         legend = "";
         level = 0;
+
         setPreferredSize(new Dimension(SIZE, SIZE));
         setMinimumSize(new Dimension(SIZE, SIZE));
         setBackground(Color.black);
         setForeground(Color.white);
-        setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 120));
         setFocusable(true);
     }
 
@@ -73,12 +78,18 @@ public class Screen extends JPanel
         {
             p.draw(g);
         }
-
+        
+        this.setFont(bigText);
         // Draw the legend across the middle of the panel
         int size = g.getFontMetrics().stringWidth(legend);
-        g.drawString(legend, (SIZE - size) / 2, SIZE / 2);        
+        g.drawString(legend, (SIZE - size) / 2, SIZE / 2);
 
+        this.setFont(smallText);
         // font is fluid, refer to Piazza
-        // g.drawString(""+score, 0, 120);
+        g.drawString(""+score, 0, 120);
+        
+        g.drawString(""+level, SIZE - 100, 120);
+        
+        this.setFont(bigText);
     }
 }
