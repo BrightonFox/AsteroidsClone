@@ -142,19 +142,19 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         {
             if (i % 4 == 0)
             {
-                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, EDGE_OFFSET + RANDOM.nextInt(50) - 25, EDGE_OFFSET + RANDOM.nextInt(50) - 25, 3, this));
+                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, EDGE_OFFSET + RANDOM.nextInt(50) - 25, EDGE_OFFSET + RANDOM.nextInt(50) - 25, this));
             }
             if (i % 4 == 1)
             {
-                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, EDGE_OFFSET + RANDOM.nextInt(50) - 25, 3, this));
+                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, EDGE_OFFSET + RANDOM.nextInt(50) - 25, this));
             }
             if (i % 4 == 2)
             {
-                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, EDGE_OFFSET + RANDOM.nextInt(50) - 25, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, 3, this));
+                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, EDGE_OFFSET + RANDOM.nextInt(50) - 25, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, this));
             }
             if (i % 4 == 3)
             {
-                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, 3, this));
+                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, this));
             }
         }
     }
@@ -247,21 +247,25 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
      * An asteroid has been destroyed
      */
     public void asteroidDestroyed (Asteroid a)
-    {
+    {     
+        // adds points for destroying asteroid
+        score += ASTEROID_SCORE[a.getSize()];
+         display.setScore(score);       
+        
         // creates two new asteroids of smaller size
         if (a.getSize() == 2)
         {
             addParticipant(
-                    new Asteroid((int) (Math.random() * 3), 1, a.getX(), a.getY(), (int) a.getSpeed() + 1, this));
+                    new Asteroid((int) (Math.random() * 3), 1, a.getX(), a.getY(), this));
             addParticipant(
-                    new Asteroid((int) (Math.random() * 3), 1, a.getX(), a.getY(), (int) a.getSpeed() + 1, this));
+                    new Asteroid((int) (Math.random() * 3), 1, a.getX(), a.getY(), this));
         }
         else if (a.getSize() == 1)
         {
             addParticipant(
-                    new Asteroid((int) (Math.random() * 3), 0, a.getX(), a.getY(), (int) a.getSpeed() + 1, this));
+                    new Asteroid((int) (Math.random() * 3), 0, a.getX(), a.getY(), this));
             addParticipant(
-                    new Asteroid((int) (Math.random() * 3), 0, a.getX(), a.getY(), (int) a.getSpeed() + 1, this));
+                    new Asteroid((int) (Math.random() * 3), 0, a.getX(), a.getY(), this));
         }
 
         // Expire the asteroid

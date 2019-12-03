@@ -29,7 +29,7 @@ public class Asteroid extends Participant implements ShipDestroyer
      * positions it at the provided coordinates with a random rotation. Its velocity has the given speed but is in a
      * random direction.
      */
-    public Asteroid (int variety, int size, double x, double y, int speed, Controller controller)
+    public Asteroid (int variety, int size, double x, double y, Controller controller)
     {
         // Make sure size and variety are valid
         if (size < 0 || size > 2)
@@ -41,6 +41,21 @@ public class Asteroid extends Participant implements ShipDestroyer
             throw new IllegalArgumentException();
         }
 
+        int speed = 0;
+        
+        if (size == 2)
+        {
+            speed = MAXIMUM_LARGE_ASTEROID_SPEED;
+        }
+        else if (size == 1)
+        {
+            speed = RANDOM.nextInt(2) + MAXIMUM_LARGE_ASTEROID_SPEED;
+        }
+        else if (size == 0)
+        {
+            speed = RANDOM.nextInt(5) + MAXIMUM_LARGE_ASTEROID_SPEED;
+        }
+        
         // Create the asteroid
         this.controller = controller;
         this.size = size;

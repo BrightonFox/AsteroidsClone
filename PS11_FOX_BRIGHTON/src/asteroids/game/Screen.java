@@ -18,6 +18,8 @@ public class Screen extends JPanel
     /** Game controller */
     private Controller controller;
 
+    private int score;
+
     /**
      * Creates an empty screen
      */
@@ -46,6 +48,11 @@ public class Screen extends JPanel
     {
         this.level = level;
     }
+    
+    public void setScore (int score)
+    {
+        this.score = score;
+    }
 
     /**
      * Paint the participants onto this panel
@@ -72,6 +79,6 @@ public class Screen extends JPanel
         g.drawString(legend, (SIZE - size) / 2, SIZE / 2);        
 
         // font is fluid, refer to Piazza
-        // g.drawString(""+level, 0, 120);
+        // g.drawString(""+score, 0, 120);
     }
 }

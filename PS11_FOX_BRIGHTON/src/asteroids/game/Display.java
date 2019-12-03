@@ -72,4 +72,9 @@ public class Display extends JFrame
     {
         screen.setLevel(l);
     }
+    
+    public void setScore (int s)
+    {
+        screen.setScore(s);
+    }
 }
