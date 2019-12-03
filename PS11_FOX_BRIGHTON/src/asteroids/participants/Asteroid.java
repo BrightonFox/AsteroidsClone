@@ -161,6 +161,12 @@ public class Asteroid extends Participant implements ShipDestroyer
         {
             // Inform the controller
             controller.asteroidDestroyed(this);
+            
+            // Spawn transient dust
+            for (int i = 0; i < 4; ++i)
+            {
+                this.controller.addParticipant(new Debris(this.getX(), this.getY(), 1));
+            }
         }
     }
 }
