@@ -50,8 +50,11 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     /** Status of space bar */
     private boolean spacePressed;
 
-    /** Current 'level; of game */
+    /** Current 'level' of game */
     private int level;
+    
+    /** player's current score */
+    private int score;
 
     /**
      * Constructs a controller to coordinate the game and screen
@@ -99,13 +102,14 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
      */
     private void splashScreen ()
     {
-        // Clear the screen, reset the level, and display the legend
+        // Clear the screen, reset the level and score, and display the legend
         clear();
         level = 1;
+        score = 0;
         display.setLegend("Asteroids");
 
         // Place four asteroids near the corners of the screen.
-        placeAsteroids(level + 3);
+        placeAsteroids(4);
     }
 
     /**
@@ -181,6 +185,10 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
         // Reset statistics
         lives = 1;
+        level = 1;
+        score = 0;
+        
+        display.setLevel(level);
 
         // Start listening to events (but don't listen twice)
         display.removeKeyListener(this);
@@ -196,6 +204,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     private void nextLevel() {
         clear();
         level++;
+        display.setLevel(level);
         
         bulletCount = 0;
         
@@ -431,6 +440,11 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
     public void bulletNumAdjust (int adjustment)
     {
-        bulletCount = bulletCount + adjustment;
+        this.bulletCount += adjustment;
+    }
+    
+    public void scoreAdd (int scoreAdd)
+    {
+        this.score += scoreAdd;
     }
 }

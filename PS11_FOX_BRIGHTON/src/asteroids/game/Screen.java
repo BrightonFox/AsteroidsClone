@@ -12,6 +12,8 @@ public class Screen extends JPanel
 {
     /** Legend that is displayed across the screen */
     private String legend;
+    
+    private int level;
 
     /** Game controller */
     private Controller controller;
@@ -23,6 +25,7 @@ public class Screen extends JPanel
     {
         this.controller = controller;
         legend = "";
+        level = 0;
         setPreferredSize(new Dimension(SIZE, SIZE));
         setMinimumSize(new Dimension(SIZE, SIZE));
         setBackground(Color.black);
@@ -37,6 +40,11 @@ public class Screen extends JPanel
     public void setLegend (String legend)
     {
         this.legend = legend;
+    }
+    
+    public void setLevel (int level)
+    {
+        this.level = level;
     }
 
     /**
@@ -61,6 +69,9 @@ public class Screen extends JPanel
 
         // Draw the legend across the middle of the panel
         int size = g.getFontMetrics().stringWidth(legend);
-        g.drawString(legend, (SIZE - size) / 2, SIZE / 2);
+        g.drawString(legend, (SIZE - size) / 2, SIZE / 2);        
+
+        // font is fluid, refer to Piazza
+        // g.drawString(""+level, 0, 120);
     }
 }
