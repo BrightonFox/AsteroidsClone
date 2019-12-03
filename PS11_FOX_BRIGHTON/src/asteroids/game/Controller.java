@@ -138,19 +138,19 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         {
             if (i % 4 == 0)
             {
-                addParticipant(new Asteroid(0, 2, EDGE_OFFSET, EDGE_OFFSET, 3, this));
+                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, EDGE_OFFSET + RANDOM.nextInt(50) - 25, EDGE_OFFSET + RANDOM.nextInt(50) - 25, 3, this));
             }
             if (i % 4 == 1)
             {
-                addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, EDGE_OFFSET, 3, this));
+                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, EDGE_OFFSET + RANDOM.nextInt(50) - 25, 3, this));
             }
             if (i % 4 == 2)
             {
-                addParticipant(new Asteroid(0, 2, EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, EDGE_OFFSET + RANDOM.nextInt(50) - 25, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, 3, this));
             }
             if (i % 4 == 3)
             {
-                addParticipant(new Asteroid(0, 2, SIZE - EDGE_OFFSET, SIZE - EDGE_OFFSET, 3, this));
+                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, 3, this));
             }
         }
     }
@@ -188,6 +188,19 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
         // Give focus to the game screen
         display.requestFocusInWindow();
+    }
+    
+    /**
+     * Sets things up for a new level
+     */
+    private void nextLevel() {
+        clear();
+        level++;
+        
+        bulletCount = 0;
+        
+        placeAsteroids(level + 3);
+        placeShip();
     }
 
     /**
@@ -249,6 +262,8 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         if (countAsteroids() == 0)
         {
             scheduleTransition(END_DELAY);
+            
+            nextLevel();
         }
     }
 
@@ -350,7 +365,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     @Override
     public void keyPressed (KeyEvent e)
     {
-        if (e.getKeyCode() == KeyEvent.VK_SPACE && ship != null)
+        if ((e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) && ship != null)
         {
             spacePressed = true;
         }
@@ -379,7 +394,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     @Override
     public void keyReleased (KeyEvent e)
     {
-        if (e.getKeyCode() == KeyEvent.VK_SPACE && ship != null)
+        if ((e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) && ship != null)
         {
             spacePressed = false;
         }
