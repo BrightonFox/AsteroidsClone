@@ -11,7 +11,7 @@ import asteroids.game.ParticipantCountdownTimer;
 /**
  * Represents ships
  */
-public class Ship extends Participant implements AsteroidDestroyer
+public class Ship extends Participant implements AsteroidDestroyer, AlienShipDestroyer
 {
     /** The outline of the ship */
     private Shape outline;
@@ -19,6 +19,7 @@ public class Ship extends Participant implements AsteroidDestroyer
     /** Game controller */
     private Controller controller;
 
+    /** boolean to control ship flame */
     public boolean flame;
 
     /**
@@ -188,6 +189,11 @@ public class Ship extends Participant implements AsteroidDestroyer
 
             // Tell the controller the ship was destroyed
             controller.shipDestroyed();
+            
+            // Spawn debris from destroyed ship
+            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 21));
+            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 21));
+            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 8));
         }
     }
 

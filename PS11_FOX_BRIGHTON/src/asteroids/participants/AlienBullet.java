@@ -11,19 +11,20 @@ import asteroids.game.ParticipantCountdownTimer;
 /**
  * Represents bullet
  */
-public class Bullet extends Participant implements AsteroidDestroyer, AlienShipDestroyer
+public class AlienBullet extends Participant implements ShipDestroyer, AsteroidDestroyer
 {
     /** The outline of the bullet */
     private Shape outline;
     
     /** Game controller */
+    @SuppressWarnings("unused")
     private Controller controller;
     
     /**
      * Constructs bullet at specified coordinates, headed in specified direction at BULLET_SPEED
      * Calls Countdown Complete after BULLET_DURATION milliseconds
      */
-    public Bullet(int x, int y, double direction, Controller controller)
+    public AlienBullet(int x, int y, double direction, Controller controller)
     {
         this.controller = controller;
         setPosition(x, y);
@@ -53,28 +54,24 @@ public class Bullet extends Participant implements AsteroidDestroyer, AlienShipD
     }
     
     /**
-     * Expires bullet after BULLET_DURATION milliseconds and decreases count of bullets on screen
+     * Expires bullet after BULLET_DURATION milliseconds
      */
     @Override
     public void countdownComplete(final Object payload)
     {
-        controller.bulletNumAdjust(-1);
-        
         Participant.expire(this);
     }
     
     /**
-     * When a Bullet collides with a ShipDestroyer, it expires
+     * When an AlienBullet collides with an AlienShipDestroyer, it expires
      */
     @Override
     public void collidedWith (Participant p)
     {
-        if (p instanceof ShipDestroyer)
+        if (p instanceof AlienShipDestroyer)
         {
             // Expire the bullet from the game
             Participant.expire(this);
-            
-            controller.bulletNumAdjust(-1);
         }
     }
 }
