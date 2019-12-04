@@ -63,8 +63,18 @@ public class Bullet extends Participant implements AsteroidDestroyer
         Participant.expire(this);
     }
     
+    /**
+     * When a Bullet collides with a ShipDestroyer, it expires
+     */
     @Override
     public void collidedWith (Participant p)
-    { 
+    {
+        if (p instanceof ShipDestroyer)
+        {
+            // Expire the ship from the game
+            Participant.expire(this);
+            
+            controller.bulletNumAdjust(-1);
+        }
     }
 }
