@@ -23,7 +23,7 @@ public class AlienShip extends Participant implements AsteroidDestroyer, ShipDes
     /** Game controller */
     private Controller controller;
 
-    private int changeDirection;
+    private boolean changeDirection;
 
     /**
      * Spawns an alien ship outside of the screen of the given size
@@ -34,7 +34,7 @@ public class AlienShip extends Participant implements AsteroidDestroyer, ShipDes
 
         this.size = size;
 
-        changeDirection = 0;
+        changeDirection = false;
 
         final Path2D.Double poly = new Path2D.Double();
         poly.moveTo(20.0, 0.0);
@@ -53,14 +53,14 @@ public class AlienShip extends Participant implements AsteroidDestroyer, ShipDes
         poly.closePath();
         this.outline = poly;
 
-        new ParticipantCountdownTimer(this, "directionChange", 1500);
+        new ParticipantCountdownTimer(this, "directionChange", 1500); // timer to set direction change constant to 1
         new ParticipantCountdownTimer(this, "fire", 1250);
 
-        double scale = ALIENSHIP_SCALE[this.size];
+        double scale = ALIENSHIP_SCALE[this.size]; // determines scale based on ship size
         poly.transform(AffineTransform.getScaleInstance(scale, scale));
 
-        this.setPosition(0, 0);
-        this.setVelocity(2, Constants.RANDOM.nextInt(2) * Math.PI);
+        this.setPosition(0, 0); // spawns alien ship off screen
+        this.setVelocity(2, Constants.RANDOM.nextInt(2) * Math.PI); // randomly sets velocity
     }
 
     /**
@@ -84,15 +84,23 @@ public class AlienShip extends Participant implements AsteroidDestroyer, ShipDes
     }
 
     /**
+     * Returns the size of the alien ship
+     */
+    public int getSize ()
+    {
+        return size;
+    }
+
+    /**
      * 
      */
     @Override
     public void move ()
     {
         super.move();
-        if (this.changeDirection == 1)
+        if (changeDirection)
         {
-            this.changeDirection = 0;
+            changeDirection = false;
             if (Math.cos(this.getDirection()) > 0.0)
             {
                 this.setDirection(Constants.RANDOM.nextInt(3) - 1);
@@ -116,7 +124,7 @@ public class AlienShip extends Participant implements AsteroidDestroyer, ShipDes
     {
         if (payload.equals("directionChange"))
         {
-            this.changeDirection = 1;
+            changeDirection = true;
         }
         else if (payload.equals("fire"))
         {
@@ -129,14 +137,32 @@ public class AlienShip extends Participant implements AsteroidDestroyer, ShipDes
     {
         if (p instanceof AlienShipDestroyer)
         {
-            Participant.expire(this);
+            // Inform the controller
+            controller.alienShipDestroyed(this);
+
+            // Spawn debris from destroyed ship
+            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 21));
+            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 21));
+            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 8));
         }
     }
 
     public void fireAlienBullet ()
     {
-        AlienBullet alienBullet = new AlienBullet((int) this.getX(), (int) this.getY(), Constants.RANDOM.nextDouble() * 2 * Math.PI, this.controller);
-        this.controller.addParticipant(alienBullet);
-        new ParticipantCountdownTimer(this, "fire", 1500);
+        if (controller.getShip() != null && size == 0)
+        {
+            AlienBullet alienBullet = new AlienBullet((int) this.getX(), (int) this.getY(),
+                    Math.atan2(controller.getShip().getY() - this.getY(), controller.getShip().getX() - this.getX()),
+                    controller);
+            this.controller.addParticipant(alienBullet);
+            new ParticipantCountdownTimer(this, "fire", 1500);
+        }
+        else if (controller.getShip() != null && size == 1)
+        {
+            AlienBullet alienBullet = new AlienBullet((int) this.getX(), (int) this.getY(),
+                    2 * Math.PI * RANDOM.nextDouble(), controller);
+            this.controller.addParticipant(alienBullet);
+            new ParticipantCountdownTimer(this, "fire", 1500);
+        }
     }
 }

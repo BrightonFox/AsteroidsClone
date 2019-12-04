@@ -28,9 +28,11 @@ public class Asteroids
         {
             new Controller();
         }
-        else if (choice == 1)
+        else if (choice == 10)
         {
             JOptionPane.showMessageDialog(null, "Sorry, there is no enhanced version");
         }
     }
 }
+
+

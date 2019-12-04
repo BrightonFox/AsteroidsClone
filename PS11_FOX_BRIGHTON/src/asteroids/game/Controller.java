@@ -23,6 +23,9 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     /** When this timer goes off, it is time to refresh the animation */
     private Timer refreshTimer;
 
+    /** When this timer goes off, it is time to spawn an alien ship **/
+    private Timer alienShipSpawnTimer;
+
     /**
      * The time at which a transition to a new stage of the game should be made. A transition is scheduled a few seconds
      * in the future to give the user time to see what has happened before doing something like going to a new level or
@@ -53,11 +56,9 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
     /** Current 'level' of game */
     private int level;
-    
+
     /** player's current score */
     private int score;
-
-    private AlienShip alienShip;
 
     /**
      * Constructs a controller to coordinate the game and screen
@@ -70,6 +71,9 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         // Set up the refresh timer.
         refreshTimer = new Timer(FRAME_INTERVAL, this);
 
+        // Set up the alienship spawn timer
+        alienShipSpawnTimer = new Timer(RANDOM.nextInt(5001) + 5000, this);
+
         // Clear the transitionTime
         transitionTime = Long.MAX_VALUE;
 
@@ -80,6 +84,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         splashScreen();
         display.setVisible(true);
         refreshTimer.start();
+        alienShipSpawnTimer.start();
     }
 
     /**
@@ -141,43 +146,59 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
      */
     private void placeAlienShip ()
     {
-        // Place a new ship
+        // Place an alien ship based on level every 5-10 seconds
         if (level == 2)
         {
-            alienShip = new AlienShip(1, this);
-            
-            addParticipant(alienShip);
+            addParticipant(new AlienShip(1, this)); // spawns medium ship
+            alienShipSpawnTimer = new Timer(RANDOM.nextInt(5001) + 5000, this); // resets spawn timer to have truly
+                                                                                // random spawn times
         }
-        else if (level >= 3)
+        else if (level >= 3) // spawns small ship
         {
-            alienShip = new AlienShip(0, this);
-            
-            addParticipant(alienShip);
+            addParticipant(new AlienShip(0, this));
+            alienShipSpawnTimer = new Timer(RANDOM.nextInt(5001) + 5000, this); // resets spawn timer to have truly
+                                                                                // random spawn times
         }
     }
-    
+
+    public void alienShipDestroyed (AlienShip a)
+    {
+        // adds points for destroying asteroid
+        score += ALIENSHIP_SCORE[a.getSize()];
+        // updates display
+        display.setScore(score);
+        // removes ship from participants
+        Participant.expire(a);
+        // starts timer to spawn next ship
+        alienShipSpawnTimer.start();
+    }
+
     /**
      * Place an asteroids near corners of the screen. Gives them a random velocity and rotation.
      */
     private void placeAsteroids (int numOfAsteroids)
-    {               
+    {
         for (int i = 0; i < numOfAsteroids; i++)
         {
             if (i % 4 == 0)
             {
-                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, EDGE_OFFSET + RANDOM.nextInt(50) - 25, EDGE_OFFSET + RANDOM.nextInt(50) - 25, this));
+                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, EDGE_OFFSET + RANDOM.nextInt(50) - 25,
+                        EDGE_OFFSET + RANDOM.nextInt(50) - 25, this));
             }
             if (i % 4 == 1)
             {
-                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, EDGE_OFFSET + RANDOM.nextInt(50) - 25, this));
+                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25,
+                        EDGE_OFFSET + RANDOM.nextInt(50) - 25, this));
             }
             if (i % 4 == 2)
             {
-                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, EDGE_OFFSET + RANDOM.nextInt(50) - 25, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, this));
+                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, EDGE_OFFSET + RANDOM.nextInt(50) - 25,
+                        SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, this));
             }
             if (i % 4 == 3)
             {
-                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, this));
+                addParticipant(new Asteroid(RANDOM.nextInt(4), 2, SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25,
+                        SIZE - EDGE_OFFSET + RANDOM.nextInt(50) - 25, this));
             }
         }
     }
@@ -210,7 +231,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         lives = 3;
         level = 1;
         score = 0;
-        
+
         display.setLives(lives);
         display.setLevel(level);
         display.setScore(score);
@@ -222,19 +243,22 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         // Give focus to the game screen
         display.requestFocusInWindow();
     }
-    
+
     /**
      * Sets things up for a new level
      */
-    private void nextLevel() {
-        clear();
-        level++;
-        display.setLevel(level);
+    private void nextLevel ()
+    {
+        clear(); // clears participants from screen
+        level++; // increments level
+        display.setLevel(level); // sets new level
+
+        bulletCount = 0; // resets bullet amount counter
+
+        placeAsteroids(level + 3); // spawns adequate number of asteroids
+        placeShip(); // places player ship
         
-        bulletCount = 0;
-        
-        placeAsteroids(level + 3);
-        placeShip();
+        alienShipSpawnTimer.start(); //to catch when a ship is still alive and a level increases
     }
 
     /**
@@ -263,7 +287,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
         // Decrement lives
         lives--;
-        
+
         // Change visual life count
         display.setLives(lives);
 
@@ -276,25 +300,21 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
      */
     public void asteroidDestroyed (Asteroid a)
 
-    {     
+    {
         // adds points for destroying asteroid
         score += ASTEROID_SCORE[a.getSize()];
-         display.setScore(score);       
-        
+        display.setScore(score);
+
         // creates two new asteroids of smaller size
         if (a.getSize() == 2)
         {
-            addParticipant(
-                    new Asteroid((int) (Math.random() * 3), 1, a.getX(), a.getY(), this));
-            addParticipant(
-                    new Asteroid((int) (Math.random() * 3), 1, a.getX(), a.getY(), this));
+            addParticipant(new Asteroid((int) (Math.random() * 3), 1, a.getX(), a.getY(), this));
+            addParticipant(new Asteroid((int) (Math.random() * 3), 1, a.getX(), a.getY(), this));
         }
         else if (a.getSize() == 1)
         {
-            addParticipant(
-                    new Asteroid((int) (Math.random() * 3), 0, a.getX(), a.getY(), this));
-            addParticipant(
-                    new Asteroid((int) (Math.random() * 3), 0, a.getX(), a.getY(), this));
+            addParticipant(new Asteroid((int) (Math.random() * 3), 0, a.getX(), a.getY(), this));
+            addParticipant(new Asteroid((int) (Math.random() * 3), 0, a.getX(), a.getY(), this));
         }
 
         // Expire the asteroid
@@ -304,7 +324,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         if (countAsteroids() == 0)
         {
             scheduleTransition(END_DELAY);
-            
+
             nextLevel();
         }
     }
@@ -328,6 +348,12 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         if (e.getSource() instanceof JButton)
         {
             initialScreen();
+        }
+
+        // Time to spawn in an alien ship
+        if (e.getSource() == alienShipSpawnTimer)
+        {
+            placeAlienShip();
         }
 
         // Time to refresh the screen and deal with keyboard input
@@ -411,7 +437,8 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     @Override
     public void keyPressed (KeyEvent e)
     {
-        if ((e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) && ship != null)
+        if ((e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_S
+                || e.getKeyCode() == KeyEvent.VK_DOWN) && ship != null)
         {
             spacePressed = true;
         }
@@ -440,7 +467,8 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     @Override
     public void keyReleased (KeyEvent e)
     {
-        if ((e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) && ship != null)
+        if ((e.getKeyCode() == KeyEvent.VK_SPACE || e.getKeyCode() == KeyEvent.VK_S
+                || e.getKeyCode() == KeyEvent.VK_DOWN) && ship != null)
         {
             spacePressed = false;
         }
@@ -479,7 +507,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     {
         this.bulletCount += adjustment;
     }
-    
+
     public void scoreAdd (int scoreAdd)
     {
         this.score += scoreAdd;
