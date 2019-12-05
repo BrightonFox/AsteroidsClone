@@ -30,6 +30,10 @@ public class Asteroids
         }
         else if (choice == 1)
         {
+            /**
+             * Enhanced Differences:
+             * Better ship flame
+             */           
             new Controller(1);
         }
     }
