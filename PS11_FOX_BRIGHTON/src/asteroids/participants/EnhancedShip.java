@@ -17,7 +17,7 @@ import asteroids.game.ParticipantCountdownTimer;
 /**
  * Represents ships
  */
-public class Ship extends Participant implements AsteroidDestroyer, AlienShipDestroyer
+public class EnhancedShip extends Ship implements AsteroidDestroyer, AlienShipDestroyer
 {
     /** The outline of the ship */
     private Shape outline;
@@ -31,8 +31,9 @@ public class Ship extends Participant implements AsteroidDestroyer, AlienShipDes
     /**
      * Constructs a ship at the specified coordinates that is pointed in the given direction.
      */
-    public Ship (int x, int y, double direction, Controller controller)
+    public EnhancedShip (int x, int y, double direction, Controller controller)
     {
+        super(x, y, direction, controller);
         this.controller = controller;
         setPosition(x, y);
         setRotation(direction);
@@ -113,7 +114,7 @@ public class Ship extends Participant implements AsteroidDestroyer, AlienShipDes
         }        
         else
         {
-            makeNoFlame();
+            makeSmallFlame();
         }
         
         //plays acceleration sound
@@ -125,10 +126,34 @@ public class Ship extends Participant implements AsteroidDestroyer, AlienShipDes
      */
     public void makeNoFlame ()
     {
-    	Path2D.Double poly = new Path2D.Double();
+        Path2D.Double poly = new Path2D.Double();
         poly.moveTo(21, 0);
         poly.lineTo(-21, 12);
         poly.lineTo(-14, 10);
+        poly.lineTo(-14, -10);
+        poly.lineTo(-21, -12);
+        poly.closePath();
+        outline = poly;
+    }
+
+    /**
+     * Creates small flame on back of ship
+     */
+    private void makeSmallFlame ()
+    {
+        Path2D.Double poly = new Path2D.Double();
+        poly.moveTo(21, 0);
+        poly.lineTo(-21, 12);
+        poly.lineTo(-14, 10);
+        poly.lineTo(-17.75, 8);
+        poly.lineTo(-16.25, 6);
+        poly.lineTo(-21.5, 4);
+        poly.lineTo(-18.5, 2);
+        poly.lineTo(-26, 0);
+        poly.lineTo(-18.5, -2);
+        poly.lineTo(-21.5, -4);
+        poly.lineTo(-16.25, -6);
+        poly.lineTo(-17.75, -8);
         poly.lineTo(-14, -10);
         poly.lineTo(-21, -12);
         poly.closePath();
@@ -137,7 +162,7 @@ public class Ship extends Participant implements AsteroidDestroyer, AlienShipDes
     }
 
     /**
-     * Creates flame on back of ship
+     * Creates large flame on back of ship
      */
     private void makeFlame ()
     {
@@ -145,9 +170,15 @@ public class Ship extends Participant implements AsteroidDestroyer, AlienShipDes
         poly.moveTo(21, 0);
         poly.lineTo(-21, 12);
         poly.lineTo(-14, 10);
-        poly.lineTo(-14, 6);
-        poly.lineTo(-21, 0);
-        poly.lineTo(-14, -6);
+        poly.lineTo(-19, 8);
+        poly.lineTo(-17, 6);
+        poly.lineTo(-24, 4);
+        poly.lineTo(-20, 2);
+        poly.lineTo(-30, 0);
+        poly.lineTo(-20, -2);
+        poly.lineTo(-24, -4);
+        poly.lineTo(-17, -6);
+        poly.lineTo(-19, -8);
         poly.lineTo(-14, -10);
         poly.lineTo(-21, -12);
         poly.closePath();

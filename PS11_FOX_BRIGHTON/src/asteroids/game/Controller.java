@@ -13,6 +13,7 @@ import javax.swing.*;
 import asteroids.participants.AlienShip;
 import asteroids.participants.Asteroid;
 import asteroids.participants.Bullet;
+import asteroids.participants.EnhancedShip;
 import asteroids.participants.Ship;
 
 /**
@@ -20,6 +21,8 @@ import asteroids.participants.Ship;
  */
 public class Controller implements KeyListener, ActionListener, Iterable<Participant>
 {
+    private int version;
+
     /** The state of all the Participants */
     private ParticipantState pstate;
 
@@ -65,7 +68,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
     /** player's current score */
     private int score;
-    
+
     private int beatSwitch;
 
     private Clip fireClip;
@@ -95,8 +98,11 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     /**
      * Constructs a controller to coordinate the game and screen
      */
-    public Controller ()
+    public Controller (int version)
     {
+        // Set game type
+        this.version = version;
+
         // Initialize the ParticipantState
         pstate = new ParticipantState();
 
@@ -107,7 +113,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         alienShipSpawnTimer = new Timer(RANDOM.nextInt(5001) + 5000, this);
 
         beatTimer = new Timer(1000, this);
-        
+
         beatSwitch = 0;
 
         // Clear the transitionTime
@@ -185,7 +191,14 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     {
         // Place a new ship
         Participant.expire(ship);
-        ship = new Ship(SIZE / 2, SIZE / 2, -Math.PI / 2, this);
+        if (version == 0)
+        {
+            ship = new Ship(SIZE / 2, SIZE / 2, -Math.PI / 2, this);
+        }
+        else if (version == 1)
+        {
+            ship = new EnhancedShip(SIZE / 2, SIZE / 2, -Math.PI / 2, this);
+        }
         addParticipant(ship);
         display.setLegend("");
     }
@@ -328,7 +341,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         placeShip(); // places player ship
 
         alienShipSpawnTimer.start(); // to catch when a ship is still alive and a level increases
-        
+
         beatTimer = new Timer(1100 - 100 * level, this);
         beatTimer.start();
     }
