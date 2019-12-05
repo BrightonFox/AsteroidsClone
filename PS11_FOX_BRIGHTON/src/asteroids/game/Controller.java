@@ -87,7 +87,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     private Clip bangLargeClip;
 
     private Clip bangMediumClip;
-
+    
     private Clip bangSmallClip;
 
     private Clip beat1Clip;
@@ -141,6 +141,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         alienShipSpawnTimer.start();
         beatTimer.start();
 
+        //stores sound files in prepared variables
         fireClip = createClip("/sounds/fire.wav");
         thrustClip = createClip("/sounds/thrust.wav");
         beat1Clip = createClip("/sounds/beat1.wav");
@@ -357,7 +358,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
         // Reset statistics
         lives = 3;
-        level = 2;
+        level = 1;
         score = 0;
 
         display.setLives(lives);
