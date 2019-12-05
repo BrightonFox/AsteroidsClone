@@ -221,35 +221,4 @@ public class EnhancedShip extends Ship implements AsteroidDestroyer, AlienShipDe
             new ParticipantCountdownTimer(this, "move", 200);
         }
     }
-    
-    /**
-     * Creates an audio clip from a sound file.
-     */
-    public Clip createClip (String soundFile)
-    {
-        // Opening the sound file this way will work no matter how the
-        // project is exported. The only restriction is that the
-        // sound files must be stored in a package.
-        try (BufferedInputStream sound = new BufferedInputStream(getClass().getResourceAsStream(soundFile)))
-        {
-            // Create and return a Clip that will play a sound file. There are
-            // various reasons that the creation attempt could fail. If it
-            // fails, return null.
-            Clip clip = AudioSystem.getClip();
-            clip.open(AudioSystem.getAudioInputStream(sound));
-            return clip;
-        }
-        catch (LineUnavailableException e)
-        {
-            return null;
-        }
-        catch (IOException e)
-        {
-            return null;
-        }
-        catch (UnsupportedAudioFileException e)
-        {
-            return null;
-        }
-    }
 }
