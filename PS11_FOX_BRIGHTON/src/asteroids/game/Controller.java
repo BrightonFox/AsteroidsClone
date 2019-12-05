@@ -13,6 +13,7 @@ import javax.swing.*;
 import asteroids.participants.AlienShip;
 import asteroids.participants.Asteroid;
 import asteroids.participants.Bullet;
+import asteroids.participants.EnhancedAlienShip;
 import asteroids.participants.EnhancedShip;
 import asteroids.participants.Ship;
 
@@ -21,7 +22,7 @@ import asteroids.participants.Ship;
  */
 public class Controller implements KeyListener, ActionListener, Iterable<Participant>
 {
-    private int version;
+    private String version;
 
     /** The state of all the Participants */
     private ParticipantState pstate;
@@ -95,13 +96,24 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
     private Timer beatTimer;
 
+    private int enhancedExtraLifeReward;
+
+    private int enhancedHiScore;
+
     /**
      * Constructs a controller to coordinate the game and screen
      */
     public Controller (int version)
     {
         // Set game type
-        this.version = version;
+        if (version == 1)
+        {
+            this.version = "Enhanced";
+        }
+        else
+        {
+            this.version = "Classic";
+        }
 
         // Initialize the ParticipantState
         pstate = new ParticipantState();
@@ -140,6 +152,8 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         saucerBigClip = createClip("/sounds/saucerBig.wav");
         saucerSmallClip = createClip("/sounds/saucerSmall.wav");
         bangAlienShipClip = createClip("/sounds/bangAlienShip.wav");
+
+        enhancedHiScore = 0;
     }
 
     /**
@@ -180,6 +194,13 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
      */
     private void finalScreen ()
     {
+        if (version.equals("Enhanced"))
+        {
+            if (score > enhancedHiScore)
+            {
+                enhancedHiScore = score;
+            }
+        }
         display.setLegend(GAME_OVER);
         display.removeKeyListener(this);
     }
@@ -191,13 +212,13 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     {
         // Place a new ship
         Participant.expire(ship);
-        if (version == 0)
-        {
-            ship = new Ship(SIZE / 2, SIZE / 2, -Math.PI / 2, this);
-        }
-        else if (version == 1)
+        if (getVersion().equals("Enhanced"))
         {
             ship = new EnhancedShip(SIZE / 2, SIZE / 2, -Math.PI / 2, this);
+        }
+        else
+        {
+            ship = new Ship(SIZE / 2, SIZE / 2, -Math.PI / 2, this);
         }
         addParticipant(ship);
         display.setLegend("");
@@ -209,32 +230,62 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     private void placeAlienShip ()
     {
         // Place an alien ship based on level every 5-10 seconds
-        if (level == 2)
+        if (getVersion().equals("Enhanced"))
         {
-            addParticipant(new AlienShip(1, this)); // spawns medium ship
+            if (level == 2)
+            {
+                addParticipant(new EnhancedAlienShip(1, this)); // spawns medium ship
 
-            // loop "saucerBig" sound
-            loopClip(saucerBigClip);
+                // loop "saucerBig" sound
+                loopClip(saucerBigClip);
 
-            alienShipSpawnTimer = new Timer(RANDOM.nextInt(5001) + 5000, this); // resets spawn timer to have truly
-                                                                                // random spawn times
+                alienShipSpawnTimer = new Timer(RANDOM.nextInt(5001) + 5000, this); // resets spawn timer to have
+                                                                                    // truly
+                                                                                    // random spawn times
+            }
+            else if (level >= 3) // spawns small ship
+            {
+                addParticipant(new EnhancedAlienShip(0, this));
+
+                // loop "saucerSmall" sound
+                loopClip(saucerSmallClip);
+
+                alienShipSpawnTimer = new Timer(RANDOM.nextInt(5001) + 5000, this); // resets spawn timer to have
+                                                                                    // truly random spawn times
+            }
         }
-        else if (level >= 3) // spawns small ship
+
+        else
         {
-            addParticipant(new AlienShip(0, this));
+            if (level == 2)
+            {
+                addParticipant(new AlienShip(1, this)); // spawns medium ship
 
-            // loop "saucerSmall" sound
-            loopClip(saucerSmallClip);
+                // loop "saucerBig" sound
+                loopClip(saucerBigClip);
 
-            alienShipSpawnTimer = new Timer(RANDOM.nextInt(5001) + 5000, this); // resets spawn timer to have truly
-                                                                                // random spawn times
+                alienShipSpawnTimer = new Timer(RANDOM.nextInt(5001) + 5000, this); // resets spawn timer to have
+                                                                                    // truly
+                                                                                    // random spawn times
+            }
+            else if (level >= 3) // spawns small ship
+            {
+                addParticipant(new AlienShip(0, this));
+
+                // loop "saucerSmall" sound
+                loopClip(saucerSmallClip);
+
+                alienShipSpawnTimer = new Timer(RANDOM.nextInt(5001) + 5000, this); // resets spawn timer to have
+                                                                                    // truly
+                                                                                    // random spawn times
+            }
         }
     }
 
     public void alienShipDestroyed (AlienShip a)
     {
         // adds points for destroying asteroid
-        score += ALIENSHIP_SCORE[a.getSize()];
+        scoreAdd(ALIENSHIP_SCORE[a.getSize()]);
 
         saucerBigClip.stop();
         saucerSmallClip.stop();
@@ -306,7 +357,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
         // Reset statistics
         lives = 3;
-        level = 1;
+        level = 2;
         score = 0;
 
         display.setLives(lives);
@@ -342,7 +393,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
         alienShipSpawnTimer.start(); // to catch when a ship is still alive and a level increases
 
-        beatTimer = new Timer(1100 - 100 * level, this);
+        beatTimer = new Timer(1050 - 50 * level, this);
         beatTimer.start();
     }
 
@@ -390,7 +441,7 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
 
     {
         // adds points for destroying asteroid
-        score += ASTEROID_SCORE[a.getSize()];
+        scoreAdd(ASTEROID_SCORE[a.getSize()]);
         display.setScore(score);
 
         // creates two new asteroids of smaller size and plays appropriate sound
@@ -631,6 +682,16 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     public void scoreAdd (int scoreAdd)
     {
         this.score += scoreAdd;
+        if (getVersion().contentEquals("Enhanced"))
+        {
+            this.enhancedExtraLifeReward += scoreAdd;
+            if (this.enhancedExtraLifeReward >= 3000)
+            {
+                this.lives++;
+                this.enhancedExtraLifeReward -= 3000;
+                display.setLives(lives);
+            }
+        }
     }
 
     /**
@@ -689,5 +750,15 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         }
         clip.setFramePosition(0);
         clip.loop(Clip.LOOP_CONTINUOUSLY);
+    }
+
+    public String getVersion ()
+    {
+        return version;
+    }
+
+    public int getEnhancedHiScore ()
+    {
+        return enhancedHiScore;
     }
 }

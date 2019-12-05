@@ -3,12 +3,6 @@ package asteroids.participants;
 import static asteroids.game.Constants.*;
 import java.awt.Shape;
 import java.awt.geom.*;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import asteroids.destroyers.*;
 import asteroids.game.Controller;
 import asteroids.game.Participant;
@@ -105,27 +99,27 @@ public class Ship extends Participant implements AsteroidDestroyer, AlienShipDes
     public void accelerate ()
     {
         accelerate(SHIP_ACCELERATION);
-        
-        //toggles flame to create flicker
+
+        // toggles flame to create flicker
         if (flame)
         {
             makeFlame();
-        }        
+        }
         else
         {
             makeNoFlame();
         }
-        
-        //plays acceleration sound
+
+        // plays acceleration sound
         controller.playClip(controller.getThrustClip());
     }
-    
+
     /**
      * Sets ship back to original shape
      */
     public void makeNoFlame ()
     {
-    	Path2D.Double poly = new Path2D.Double();
+        Path2D.Double poly = new Path2D.Double();
         poly.moveTo(21, 0);
         poly.lineTo(-21, 12);
         poly.lineTo(-14, 10);
@@ -168,7 +162,7 @@ public class Ship extends Participant implements AsteroidDestroyer, AlienShipDes
 
             // Tell the controller the ship was destroyed
             controller.shipDestroyed();
-            
+
             // Spawn debris from destroyed ship
             this.controller.addParticipant(new Debris(this.getX(), this.getY(), 21));
             this.controller.addParticipant(new Debris(this.getX(), this.getY(), 21));

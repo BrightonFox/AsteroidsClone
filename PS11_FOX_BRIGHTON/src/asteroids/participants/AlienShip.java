@@ -3,12 +3,6 @@ package asteroids.participants;
 import static asteroids.game.Constants.*;
 import java.awt.Shape;
 import java.awt.geom.*;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import asteroids.destroyers.*;
 import asteroids.game.Constants;
 import asteroids.game.Controller;
@@ -113,7 +107,7 @@ public class AlienShip extends Participant implements AsteroidDestroyer, ShipDes
             }
             else
             {
-                this.setDirection(3.141592653589793 + Constants.RANDOM.nextInt(3) - 1.0);
+                this.setDirection(Math.PI + Constants.RANDOM.nextInt(3) - 1.0);
             }
             new ParticipantCountdownTimer(this, "directionChange", 1500);
         }
@@ -147,9 +141,12 @@ public class AlienShip extends Participant implements AsteroidDestroyer, ShipDes
             controller.alienShipDestroyed(this);
 
             // Spawn debris from destroyed ship
-            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 21));
-            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 21));
-            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 8));
+            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 17));
+            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 17));
+            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 12));
+            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 12));
+            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 6));
+            this.controller.addParticipant(new Debris(this.getX(), this.getY(), 6));
         }
     }
 
@@ -169,37 +166,6 @@ public class AlienShip extends Participant implements AsteroidDestroyer, ShipDes
                     2 * Math.PI * RANDOM.nextDouble(), controller);
             this.controller.addParticipant(alienBullet);
             new ParticipantCountdownTimer(this, "fire", 1500);
-        }
-    }
-    
-    /**
-     * Creates an audio clip from a sound file.
-     */
-    public Clip createClip (String soundFile)
-    {
-        // Opening the sound file this way will work no matter how the
-        // project is exported. The only restriction is that the
-        // sound files must be stored in a package.
-        try (BufferedInputStream sound = new BufferedInputStream(getClass().getResourceAsStream(soundFile)))
-        {
-            // Create and return a Clip that will play a sound file. There are
-            // various reasons that the creation attempt could fail. If it
-            // fails, return null.
-            Clip clip = AudioSystem.getClip();
-            clip.open(AudioSystem.getAudioInputStream(sound));
-            return clip;
-        }
-        catch (LineUnavailableException e)
-        {
-            return null;
-        }
-        catch (IOException e)
-        {
-            return null;
-        }
-        catch (UnsupportedAudioFileException e)
-        {
-            return null;
         }
     }
 }

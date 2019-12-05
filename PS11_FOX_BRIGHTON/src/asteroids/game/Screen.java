@@ -27,6 +27,8 @@ public class Screen extends JPanel
 
     private Font smallText = new Font(Font.SANS_SERIF, Font.PLAIN, 40);
 
+    private Font smallerText = new Font(Font.SANS_SERIF, Font.PLAIN, 15);
+
     private Ship lifeShip;
 
     /**
@@ -39,7 +41,7 @@ public class Screen extends JPanel
         level = "";
         score = "0";
         lives = 0;
-        lifeShip = new Ship (0, 0, -(Math.PI / 2), null);
+        lifeShip = new Ship(0, 0, -(Math.PI / 2), null);
         setPreferredSize(new Dimension(SIZE, SIZE));
         setMinimumSize(new Dimension(SIZE, SIZE));
         setBackground(Color.black);
@@ -97,15 +99,31 @@ public class Screen extends JPanel
 
         g.setFont(smallText);
 
-        g.drawString("" + score, 10, 40);
+        g.drawString("" + score, 10, 50);
 
-        g.drawString("" + level, SIZE - 30, 40);
-        
+        g.drawString("" + level, SIZE - 30, 50);
+
+        g.setFont(smallerText);
+        g.drawString("SCORE", 10, 15);
+        g.drawString("LEVEL", SIZE - 50, 15);
+
         for (int i = 0; i < lives; i++)
         {
-            lifeShip.setPosition(20 + i * 30, 70);
+            lifeShip.setPosition(20 + i * 30, 75);
             lifeShip.move();
             lifeShip.draw(g);
         }
+
+        if (controller.getVersion().equals("Enhanced"))
+        {
+            g.setFont(smallText);
+
+            g.drawString("" + controller.getEnhancedHiScore(), 10, SIZE - 10);
+
+            g.setFont(smallerText);
+
+            g.drawString("HI-SCORE", 10, SIZE - 50);
+        }
+
     }
 }
