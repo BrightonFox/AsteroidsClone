@@ -33,7 +33,7 @@ public class Asteroids
             /**
              * Enhanced Differences:
              * Better ship flame
-             * Extra life every 3000 points
+             * Extra life every 5000 points
              * Alien Ship
              * -looks better
              * -after 6 seconds ditches zig-zag and follows you

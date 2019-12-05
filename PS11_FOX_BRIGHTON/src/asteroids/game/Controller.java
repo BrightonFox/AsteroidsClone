@@ -686,10 +686,10 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         if (getVersion().contentEquals("Enhanced"))
         {
             this.enhancedExtraLifeReward += scoreAdd;
-            if (this.enhancedExtraLifeReward >= 3000)
+            if (this.enhancedExtraLifeReward >= 5000)
             {
                 this.lives++;
-                this.enhancedExtraLifeReward -= 3000;
+                this.enhancedExtraLifeReward -= 5000;
                 display.setLives(lives);
             }
         }
