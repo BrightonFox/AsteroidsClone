@@ -14,7 +14,10 @@ import asteroids.participants.AlienShip;
 import asteroids.participants.Asteroid;
 import asteroids.participants.Bullet;
 import asteroids.participants.EnhancedAlienShip;
+import asteroids.participants.EnhancedBullet;
+import asteroids.participants.EnhancedForceField;
 import asteroids.participants.EnhancedShip;
+import asteroids.participants.EnhancedPowerUp;
 import asteroids.participants.Ship;
 
 /**
@@ -70,35 +73,74 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     /** player's current score */
     private int score;
 
+    /** Used to play background music */
     private int beatSwitch;
 
+    /** sound file for shooting */
     private Clip fireClip;
 
+    /** sound file for thrust */
     private Clip thrustClip;
 
+    /** sound file for ship destruction */
     private Clip bangShipClip;
 
+    /** sound file for big alien */
     private Clip saucerBigClip;
 
+    /** sound file for small alien */
     private Clip saucerSmallClip;
 
+    /** sound file for alien destruction */
     private Clip bangAlienShipClip;
 
+    /** sound file for large asteroid destruction */
     private Clip bangLargeClip;
 
+    /** sound file for medium asteroid destruction */
     private Clip bangMediumClip;
-    
+
+    /** sound file for small asteroid destruction */
     private Clip bangSmallClip;
 
+    /** sound file for background music */
     private Clip beat1Clip;
 
+    /** sound file for background music */
     private Clip beat2Clip;
 
+    /** timer for background music */
     private Timer beatTimer;
 
+    /** enhanced version extra life reward memory */
     private int enhancedExtraLifeReward;
 
+    /** enhanced version high score memory */
     private int enhancedHiScore;
+
+    /** enhanced version powerUp */
+    private EnhancedPowerUp enhancedPowerUp;
+
+    /** enhanced version power up spawn timer */
+    private Timer enhancedPowerUpSpawnTimer;
+
+    /** enhanced version bullet time powerup */
+    private boolean enhancedBulletTime;
+
+    /** enhanced version bullet time powerup timer */
+    private Timer enhancedBulletTimeTimer;
+
+    /** enhanced version force field powerup timer */
+    private Timer enhancedForceFieldTimer;
+
+    /** enhanced version double score powerup */
+    private boolean enhancedDoubleScore;
+
+    /** enhanced version double score powerup timer */
+    private Timer enhancedDoubleScoreTimer;
+
+    /** enhanced version force field object */
+    private EnhancedForceField forceField;
 
     /**
      * Constructs a controller to coordinate the game and screen
@@ -124,8 +166,8 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         // Set up the alienship spawn timer
         alienShipSpawnTimer = new Timer(RANDOM.nextInt(5001) + 5000, this);
 
+        // Set up background music
         beatTimer = new Timer(1000, this);
-
         beatSwitch = 0;
 
         // Clear the transitionTime
@@ -134,14 +176,14 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         // Record the display object
         display = new Display(this);
 
-        // Bring up the splash screen and start the refresh timer
+        // Bring up the splash screen and start the timers
         splashScreen();
         display.setVisible(true);
         refreshTimer.start();
         alienShipSpawnTimer.start();
         beatTimer.start();
 
-        //stores sound files in prepared variables
+        // stores sound files in prepared variables
         fireClip = createClip("/sounds/fire.wav");
         thrustClip = createClip("/sounds/thrust.wav");
         beat1Clip = createClip("/sounds/beat1.wav");
@@ -154,7 +196,15 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         saucerSmallClip = createClip("/sounds/saucerSmall.wav");
         bangAlienShipClip = createClip("/sounds/bangAlienShip.wav");
 
-        enhancedHiScore = 0;
+        // Set Up enhanced version
+        if (version == 1)
+        {
+            enhancedHiScore = 0;
+
+            // Set up powerup spawn system
+            enhancedPowerUpSpawnTimer = new Timer(RANDOM.nextInt(5001) + 7000, this);
+            enhancedPowerUpSpawnTimer.start();
+        }
     }
 
     /**
@@ -283,23 +333,42 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         }
     }
 
-    public void alienShipDestroyed (AlienShip a)
+    /**
+     * Place a new power-up randomly on the screen. Remove any existing power-up first.
+     */
+    private void placePowerUp ()
     {
-        // adds points for destroying asteroid
-        scoreAdd(ALIENSHIP_SCORE[a.getSize()]);
+        if (version.equals("Enhanced"))
+        {
+            enhancedPowerUp = new EnhancedPowerUp(RANDOM.nextInt(3), SIZE * RANDOM.nextDouble(),
+                    SIZE * RANDOM.nextDouble(), this);
+            enhancedPowerUpSpawnTimer.restart();
+            addParticipant(enhancedPowerUp);
+        }
+    }
 
-        saucerBigClip.stop();
-        saucerSmallClip.stop();
+    /**
+     * Creates bullet object headed in direction of ship
+     */
+    public void fireBullet ()
+    {
+        // limit number of bullets on screen to 8
+        if (ship != null && bulletCount <= BULLET_LIMIT)
+        {
+            if (enhancedBulletTime)
+            {
+                addParticipant(
+                        new EnhancedBullet((int) ship.getXNose(), (int) ship.getYNose(), ship.getRotation(), this));
+            }
+            else
+            {
+                bulletNumAdjust(1);
+                addParticipant(new Bullet((int) ship.getXNose(), (int) ship.getYNose(), ship.getRotation(), this));
+            }
 
-        // play "bangAlienShip" sound
-        playClip(bangAlienShipClip);
-
-        // updates display
-        display.setScore(score);
-        // removes ship from participants
-        Participant.expire(a);
-        // starts timer to spawn next ship
-        alienShipSpawnTimer.start();
+            // play "fire" sound
+            playClip(fireClip);
+        }
     }
 
     /**
@@ -480,6 +549,26 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         }
     }
 
+    public void alienShipDestroyed (AlienShip a)
+    {
+        // adds points for destroying asteroid
+        scoreAdd(ALIENSHIP_SCORE[a.getSize()]);
+
+        // stop alien sounds
+        saucerBigClip.stop();
+        saucerSmallClip.stop();
+
+        // play "bangAlienShip" sound
+        playClip(bangAlienShipClip);
+
+        // updates display
+        display.setScore(score);
+        // removes ship from participants
+        Participant.expire(a);
+        // starts timer to spawn next ship
+        alienShipSpawnTimer.start();
+    }
+
     /**
      * Schedules a transition m msecs in the future
      */
@@ -502,13 +591,40 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         }
 
         // Time to spawn in an alien ship
-        if (e.getSource() == alienShipSpawnTimer)
+        else if (e.getSource() == alienShipSpawnTimer)
         {
             placeAlienShip();
         }
 
+        // Time to spawn in apower up
+        else if (e.getSource() == enhancedPowerUpSpawnTimer)
+        {
+            placePowerUp();
+        }
+
+        // Time to stop bullet time
+        else if (e.getSource() == enhancedBulletTimeTimer)
+        {
+            enhancedBulletTime = false;
+            enhancedBulletTimeTimer.stop();
+        }
+
+        // Time to despawn force field
+        else if (e.getSource() == enhancedForceFieldTimer)
+        {
+            Participant.expire(forceField);
+            enhancedForceFieldTimer.stop();
+        }
+
+        // Time to stop double score power up
+        else if (e.getSource() == enhancedDoubleScoreTimer)
+        {
+            enhancedDoubleScore = false;
+            enhancedDoubleScoreTimer.stop();
+        }
+
         // Time to play the beat
-        if (e.getSource() == beatTimer)
+        else if (e.getSource() == beatTimer)
         {
             if (beatSwitch % 2 == 0)
             {
@@ -659,25 +775,9 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         }
     }
 
-    /**
-     * Creates bullet object headed in direction of ship
-     */
-    public void fireBullet ()
-    {
-        // limit number of bullets on screen to 8
-        if (ship != null && bulletCount <= BULLET_LIMIT)
-        {
-            bulletNumAdjust(1);
-            addParticipant(new Bullet((int) ship.getXNose(), (int) ship.getYNose(), ship.getRotation(), this));
-
-            // play "fire" sound
-            playClip(fireClip);
-        }
-    }
-
     public void bulletNumAdjust (int adjustment)
     {
-        this.bulletCount += adjustment;
+        bulletCount += adjustment;
     }
 
     public void scoreAdd (int scoreAdd)
@@ -685,6 +785,10 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
         this.score += scoreAdd;
         if (getVersion().contentEquals("Enhanced"))
         {
+            if (enhancedDoubleScore)
+            {
+                this.score += scoreAdd;
+            }
             this.enhancedExtraLifeReward += scoreAdd;
             if (this.enhancedExtraLifeReward >= 5000)
             {
@@ -761,5 +865,28 @@ public class Controller implements KeyListener, ActionListener, Iterable<Partici
     public int getEnhancedHiScore ()
     {
         return enhancedHiScore;
+    }
+
+    public void applyPowerUp (int type)
+    {
+        if (type == 0) // BulletTime powerup
+        {
+            enhancedBulletTime = true;
+            enhancedBulletTimeTimer = new Timer(3000, this);
+            enhancedBulletTimeTimer.start();
+        }
+        else if (type == 1) // ForceField powerup
+        {
+            forceField = new EnhancedForceField((int) ship.getX(), (int) ship.getY(), this);
+            addParticipant(forceField);
+            enhancedForceFieldTimer = new Timer(3000, this);
+            enhancedForceFieldTimer.start();
+        }
+        else if (type == 2) // DoubleScore powerup
+        {
+            enhancedDoubleScore = true;
+            enhancedDoubleScoreTimer = new Timer(5000, this);
+            enhancedDoubleScoreTimer.start();
+        }
     }
 }

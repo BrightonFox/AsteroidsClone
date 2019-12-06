@@ -39,6 +39,13 @@ public class Asteroids
              * -after 6 seconds ditches zig-zag and follows you
              * -after 12 seconds, doubles speed every 12 seconds
              * High Score mechanic
+             * PowerUp Mechanic
+             * -every 7 - 12 seconds a powerup will spawn
+             * -despawn after 5 seconds if not picked up
+             * -3 types:
+             * --Bullet Time give no bullet limit for 3 seconds
+             * --Force Field spawns an invincible field that surrounds the ship for 3 seconds
+             * --Double Points double the points awarded for 5 seconds
              * 
              */           
             new Controller(1);
